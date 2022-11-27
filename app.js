@@ -17,7 +17,7 @@ const server = app.listen(process.env.PORT || 3000, () => {
 const io = socketio(server);
 
 var q = 0;
-let player = Array();
+let player = [];
 
 io.on("connection", (socket) => {
     console.log("New user connected");
@@ -44,6 +44,8 @@ io.on("connection", (socket) => {
         console.log(this); 
     }
 
-    const client = new Player(0, color, q); 
+    const client = new Player(0, color, q);
+
+    
 
 });

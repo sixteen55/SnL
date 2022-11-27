@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+#board {
+  position: absolute;
+  top: 50px;
+  left: 50px;
+}
+.square {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-color: rgb(54, 145, 61);
+  border: 1px solid;
+}
+
+#canvas {
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  
+}
+
+.player {
+  position: absolute;
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  border: 1px solid;
+}
+    </style>
+
+    <title>Snake</title>
+</head>
+<body>
+    <button onclick=rollDice()>Roll</button>
+<div id=board>
+  
+</div>
+<canvas id=canvas width="1000" height="1000"></canvas>
+
+<script>
+    var hasWon = false;
+window.rollDice = ()=>{
+  if (hasWon) {
+    return;
+  }
+  const max = 6;
+  const roll = Math.ceil(Math.random() * max);
+  console.log("You rolled", roll);
+  alert(roll)
+  let currentPlayer = players[currentPlayerTurn];
+  currentPlayer.position += roll;
+
+  let position = 89;
+  if (currentPlayer.position >= position) {
+    console.log("Player has won!");
+    alert(currentPlayer,"Player has won!")
+    hasWon = true;
+  }
+  
+  currentPlayerTurn ++;
+  if (currentPlayerTurn >= players.length) {
+    currentPlayerTurn = 0;
+  }
+    console.log(currentPlayer.position)
+  renderBoard();
+}
+
+const players = [{
+  name:"Cloud",
+  position: 0,
+  color: "red"
+},{
+  name:"Sephiroth",
+  position: 0,
+  color: "blue"
+}];
+
+let currentPlayerTurn = 0;
+console.log(currentPlayerTurn)
+
+
+const width = 9;
+const height = 9;
+const board = [];
+let position = 0;
+let blackSquare = false;
+
+
+for (var y = height; y >= 0; y--) {
+  let row = [];
+  
+  board.push(row);
+  for (var x = 0; x < width; x++) {
+    row.push({x,y,occupied:null,position})
+    position ++;
+
+  }
+}
+
+const boardSizeConst = 50;
+const renderBoard = ()=>{
+  let boardHTML = ``;
+  board.forEach(row=>{
+    row.forEach(square=>{
+      boardHTML += `<div class=square style="top:${square.y * boardSizeConst}px; left:${square.x * boardSizeConst}px; background-color:${square.color}"></div>`
+    });
+  });
+  players.forEach(player=>{
+    let square = null;
+    board.forEach(row=>{
+    row.forEach(square=>{
+          if (square.position === player.position) {
+            boardHTML += `<div class=player style="top:${square.y * boardSizeConst + 5}px; left:${square.x * boardSizeConst + 5}px;background-color:${player.color}"></div>`;
+          }
+      });
+    });
+  });
+  
+
+  document.getElementById("board").innerHTML = boardHTML;
+}
+
+renderBoard();
+
+</script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
+    <script src="/js/client.js"></script>
+
+</body>
+</html>

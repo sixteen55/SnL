@@ -32,20 +32,47 @@ io.on("connection", (socket) => {
           }
           return color;
     }
-
     color = randomColor();
-
     randomColor();
 
     function Player(position, color, q){
         this.position = position;
         this.color = color;
         this.q = q;
-        console.log(this); 
+        // console.log(this); 
     }
+    const client = new Player(0, color, q); 
 
-    const client = new Player(0, color, q);
+    player.push(client);
 
+    // console.log(player);
     
-
+    io.sockets.emit('create_players',{player: player})
 });
+
+var hasWon = false;
+window.rollDice = ()=>{
+  if (hasWon) {
+    return;
+  }
+  const max = 6;
+  const roll = Math.ceil(Math.random() * max);
+  console.log("You rolled", roll);
+  alert(roll)
+  let currentPlayer = players[currentPlayerTurn];
+  currentPlayer.position += roll;
+
+  let position = 89;
+  if (currentPlayer.position >= position) {
+    console.log("Player has won!");
+    alert(currentPlayer,"Player has won!")
+    hasWon = true;
+  }
+  
+  currentPlayerTurn ++;
+  if (currentPlayerTurn >= players.length) {
+    currentPlayerTurn = 0;
+  }
+    console.log(currentPlayer.position)
+  renderBoard();
+}

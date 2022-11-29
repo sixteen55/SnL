@@ -22,74 +22,76 @@ var Q = 0;
 
 io.on("connection", (socket) => {
     console.log("New user connected");
-    q++;
-    io.sockets.emit('players_q',(q))
+    io.sockets.emit('create_players', (player))
 
-    function randomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var count = 0; count < 6; count++) {
-            color = color + letters[Math.floor(Math.random() * 16)];
+    socket.on('playing', data => {
+        q++;
+        io.sockets.emit('players_q', (q))
+
+        function randomColor() {
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var count = 0; count < 6; count++) {
+                color = color + letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
         }
-        return color;
-    }
-    color = randomColor();
-    randomColor();
+        color = randomColor();
 
-    function Player(position, color, q) {
+        randomColor();
 
-        const players = {
-            position: position,
-            color: color,
-            q: q
+        function Player(position, color, q) {
+
+            const players = {
+                position: position,
+                color: color,
+                q: q
+            }
+            return players
         }
-        return players
-    }
 
 
-    player.push(Player(0, color, q));
+        player.push(Player(0, color, q));
 
-    console.log(player);
+        console.log(player);
 
-    io.sockets.emit('create_players',(player))
-    // console.log(player)
-    const players = [{
-        name: "Cloud",
-        position: 0,
-        color: "red"
-    }, {
-        name: "Sephiroth",
-        position: 0,
-        color: "blue"
-    }];
-    // console.log(players)
+        io.sockets.emit('create_players', (player))
 
-    // socket.on('currentPlayer', data => {
-    //     console.log(data)
-    // })
+    })
 
     socket.on('currentPlayer', data => {
         let currentPlayer = player[Q];
-        console.log(Q)
-        console.log(data)
-        console.log(player.length)
+        console.log("Q:" + Q)
+        console.log("data:" + data)
+        console.log("num" + player.length)
         // console.log(currentPlayer)
         console.log(currentPlayer.q)
-        if (currentPlayer.q = data) {
+        console.log("-------------------------")
+        if (currentPlayer.q == data) {
             rollDice();
             Q++;
+            console.log(Q)
             if (Q >= player.length) {
                 Q = 0;
             }
         }
-        else{
-            pass
+        else {
+            io.emit('currentPlayerQ',(currentPlayer.q))
         }
     })
 
-    socket.on('test',data => {
-        // console.log(data)
+    socket.on('stopplaying', data => {
+        player.forEach(playerdata);
+        function playerdata(qplayer) {
+            if (qplayer.q == data) {
+                player.splice(player.indexOf(qplayer), 1);
+                io.sockets.emit('create_players', (player))
+            }
+            console.log(player)
+            console.log("--------------------------------------")
+        }
     })
+
 });
 
 var hasWon = false;
@@ -105,7 +107,7 @@ rollDice = () => {
     // console.log(currentPlayer)
     currentPlayer.position += roll;
 
-    io.emit('create_players',(player))
+    io.emit('create_players', (player))
 
     let position = 89;
     if (currentPlayer.position >= position) {
@@ -114,10 +116,4 @@ rollDice = () => {
         hasWon = true;
     }
 
-    Q++;
-    console.log(Q)
-    if (Q >= player.length) {
-        Q = 0;
-    }
-    // console.log(currentPlayer.position)
 }

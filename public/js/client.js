@@ -12,14 +12,34 @@
     socket.emit('test',(players))
   })
 
-  socket.on('players_q', data => {
-    playerq.push(data);
-    // console.log(playerq[0])
-    // console.log(data)
-  })
-
   rollDice = () => {
     socket.emit('currentPlayer',(playerq[0]))
+  }
+
+  stop = () => {
+    socket.emit('stopplaying',(playerq[0]))
+  }
+
+  socket.on('currentPlayerQ', data =>{
+    var currentPlayerQ = data;
+    if(currentPlayerQ == playerq[0]){
+      alert('Now is Your Turn')
+    }
+    else {
+      alert('Now is turn of player:'+currentPlayerQ)
+    }
+  })
+
+  var statusofstart = 0;
+  start = () => {
+    if (statusofstart == 0) {
+      socket.emit('playing', (1))
+      statusofstart++
+      socket.on('players_q', data => {
+        playerq.push(data);
+      })
+    }
+
   }
 
   const width = 9;
@@ -65,23 +85,5 @@
 
 })();
 
-// const players = [{
-//   name:"Cloud",
-//   position: 0,
-//   color: "red"
-// },{
-//   name:"Sephiroth",
-//   position: 0,
-//   color: "blue"
-// }];
-
 let currentPlayerTurn = 0;
 console.log(currentPlayerTurn)
-
-
-
-
-// renderBoard();
-
-// var playerse = [];
-// console.log(playerse)
